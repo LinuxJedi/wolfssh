@@ -3,7 +3,11 @@
 # All right reserved.
 
 AC_COPYRIGHT([Copyright (C) 2014-2019 wolfSSL Inc.])
-AC_INIT([wolfssh],[1.4.0],[support@wolfssl.com],[wolfssh],[https://www.wolfssl.com])
+
+# Needed for RHEL/CentOS 6
+m4_ifndef([m4_esyscmd_s], [m4_define([m4_chomp_all],[m4_format([[%.*s]], m4_bregexp(m4_translit([[$1]],[/],[/]),[/*$]), [$1])])] [m4_define([m4_esyscmd_s], [m4_chomp_all(m4_esyscmd([$1]))])])
+
+AC_INIT([wolfssh],m4_esyscmd_s([awk 'match($0, /[0-9]+\.[0-9]+\.[0-9]+/) {print substr($0, RSTART, RLENGTH)}' < wolfssh/version.h]),[support@wolfssl.com],[wolfssh],[https://www.wolfssl.com])
 AC_PREREQ([2.63])
 AC_CONFIG_AUX_DIR([build-aux])
 
@@ -165,7 +169,7 @@ AC_SUBST([AM_CFLAGS])
 AC_SUBST([AM_LDFLAGS])
 
 # FINAL
-AC_CONFIG_FILES([Makefile wolfssh/version.h])
+AC_CONFIG_FILES([Makefile])
 
 AX_CREATE_GENERIC_CONFIG
 AX_AM_JOBSERVER([yes])

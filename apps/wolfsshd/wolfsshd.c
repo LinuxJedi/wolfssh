@@ -397,13 +397,24 @@ static int SHELL_Subsystem(WOLFSSHD_CONNECTION* conn, WOLFSSH* ssh)
         /* Child process */
         const char *args[] = {"-sh", NULL};
         char cmd[80];
+        int ret;
 
         signal(SIGINT, SIG_DFL);
 
-        setgid(p_passwd->pw_gid);
-        setuid(p_passwd->pw_uid);
-        if (system("env") != 0) {
-            printf("0 return value from system call\n");
+        ret = setgid(p_passwd->pw_gid);
+        if (ret == 0) {
+            ret = setuid(p_passwd->pw_uid);
+            if (ret != 0) {
+                printf("error trying to setuid\n");
+            }
+        } else {
+            printf("error trying to setgid\n");
+        }
+        if (ret == 0) {
+            ret = system("env");
+            if (ret != 0) {
+                printf("error trying to run system call\n");
+            }
         }
 
         setenv("HOME", p_passwd->pw_dir, 1);
@@ -413,7 +424,11 @@ static int SHELL_Subsystem(WOLFSSHD_CONNECTION* conn, WOLFSSH* ssh)
         WMEMSET(cmd, 0, sizeof(cmd));
         XSNPRINTF(cmd, sizeof(cmd), "su %s", userName);
         printf("executing command [%s]\n", cmd);
-        system(cmd);
+        errno = 0;
+        ret = system(cmd);
+        if ((ret != 0) && (errno != 0)) {
+            printf("error truing to execute command\n");
+        }
         rc = chdir(p_passwd->pw_dir);
         if (rc != 0) {
             return WS_FATAL_ERROR;

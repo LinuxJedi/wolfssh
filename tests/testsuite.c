@@ -135,7 +135,7 @@ int wolfSSH_TestsuiteTest(int argc, char** argv)
     WSTRNCPY(serverArgv[serverArgc++], "echoserver", ARGLEN);
     WSTRNCPY(serverArgv[serverArgc++], "-1", ARGLEN);
     WSTRNCPY(serverArgv[serverArgc++], "-f", ARGLEN);
-    #if !defined(USE_WINDOWS_API)
+    #if !defined(USE_WINDOWS_API) && !defined(WOLFSSH_ZEPHYR)
         WSTRNCPY(serverArgv[serverArgc++], "-p", ARGLEN);
         WSTRNCPY(serverArgv[serverArgc++], "-0", ARGLEN);
     #endif
@@ -151,7 +151,7 @@ int wolfSSH_TestsuiteTest(int argc, char** argv)
     WSTRNCPY(cA[clientArgc++], "client", ARGLEN);
     WSTRNCPY(cA[clientArgc++], "-u", ARGLEN);
     WSTRNCPY(cA[clientArgc++], "jill", ARGLEN);
-    #if !defined(USE_WINDOWS_API)
+    #if !defined(USE_WINDOWS_API) && !defined(WOLFSSH_ZEPHYR)
         WSTRNCPY(cA[clientArgc++], "-p", ARGLEN);
         WSNPRINTF(cA[clientArgc++], ARGLEN, "%d", ready.port);
     #endif

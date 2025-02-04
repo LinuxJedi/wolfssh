@@ -942,8 +942,10 @@ THREAD_RETURN WOLFSSH_THREAD client_test(void* args)
         ret = wolfSSH_connect(ssh);
     else
         ret = NonBlockSSH_connect(ssh);
-    if (ret != WS_SUCCESS)
+    if (ret != WS_SUCCESS) {
+        printf("Errno: %d\n", ret);
         err_sys("Couldn't connect SSH stream.");
+    }
 
 #if !defined(SINGLE_THREADED) && !defined(WOLFSSL_NUCLEUS) && \
     defined(WOLFSSH_TERM) && !defined(NO_FILESYSTEM)
